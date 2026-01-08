@@ -13,9 +13,13 @@
                     @method('PUT')
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                         {{-- GAMBAR --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Gambar Venue</label>
+                        <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="bi bi-images me-2"></i>Gambar Venue (Maksimal 5)</h6>
+                        </div>
 
+
+                        <div class="card-body">
                             {{-- Preview gambar existing --}}
                             @if($venue->images->count() > 0)
                                 <div class="mb-2">
@@ -37,12 +41,35 @@
                                     </div>
                                 </div>
                             @endif
+                            <div class="alert alert-info d-flex align-items-center mb-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <small>Upload minimal 2 gambar, maksimal 5 gambar (2MB per file)</small>
+                            </div>
 
-                            <input type="file" name="images[]" multiple class="form-control">
-                            <small class="text-muted">
-                                Kosongkan jika tidak ingin menambah gambar baru
-                            </small>
+                            {{-- WRAPPER UTAMA: Area ini yang mendeteksi Drag & Drop --}}
+                            {{-- Kita pindahkan ID drop-area ke wrapper ini --}}
+                            <div id="drop-area-wrapper" class="p-2 rounded" style="transition: all 0.3s ease;">
+
+                                {{-- Kotak Visual (Dashed Box) --}}
+                                <div id="visual-drop-box"
+                                    class="upload-area border-2 border-dashed rounded p-4 text-center mb-3"
+                                    style="border-color: #dee2e6; cursor: pointer; background-color: #fff;">
+                                    <i class="bi bi-cloud-upload fs-1 text-primary"></i>
+                                    <p class="mb-0 mt-2">Klik atau drag & drop gambar di sini</p>
+                                    <small class="text-muted">Format: JPG, PNG, JPEG</small>
+                                </div>
+
+                                {{-- Input file tersembunyi --}}
+                                <input type="file" name="images[]" id="imageInput" multiple accept="image/*"
+                                    class="d-none">
+
+                                {{-- Preview Container (Sekarang ada di DALAM wrapper drop area) --}}
+                                <div id="imagePreviewContainer" class="row g-3">
+                                    {{-- Preview gambar akan muncul di sini --}}
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
                         {{-- NAMA LAPANGAN --}}
                         <div class="mb-3">
