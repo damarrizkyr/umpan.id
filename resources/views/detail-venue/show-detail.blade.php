@@ -47,8 +47,6 @@
                                 </div>
                             </div>
 
-                            {{-- FITUR / FASILITAS (Dibuat jadi Badge Modern) --}}
-                            {{-- Kita asumsikan fasilitas dipisah koma di database, misal: "Wifi, Parkir, Toilet" --}}
                             <div class="mb-5">
                                 <h5 class="fw-bold mb-3 text-dark">
                                     <i class="bi bi-stars text-warning me-2"></i>Fasilitas Unggulan
@@ -142,7 +140,7 @@
                         <div class="col-12">
                             <h3 class="fw-bold mb-4">
                                 <i class="bi bi-star-fill text-warning me-2"></i>Ulasan Pengunjung
-                                <span class="text-muted fs-5">({{ $venue->review_count }} ulasan)</span>
+                                <span class="text-muted">({{ $venue->review_count }} ulasan)</span>
                             </h3>
 
                             <div class="row">
