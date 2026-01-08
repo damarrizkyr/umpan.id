@@ -10,7 +10,7 @@
             </div>
         </div>
     </div>
-    <div id="venue">
+    <div  id="venue">
         {{-- Search Section --}}
         <div class="search-section">
             <div class="container">
@@ -24,10 +24,8 @@
                             <div class="col-md-3">
                                 <select name="city" class="form-select">
                                     <option value="">Semua Kota</option>
-                                    <option value="medan" {{ request('city') == 'medan' ? 'selected' : '' }}>Medan
-                                    </option>
-                                    <option value="aceh" {{ request('city') == 'aceh' ? 'selected' : '' }}>Aceh
-                                    </option>
+                                    <option value="medan" {{ request('city') == 'medan' ? 'selected' : '' }}>Medan</option>
+                                    <option value="aceh" {{ request('city') == 'aceh' ? 'selected' : '' }}>Aceh</option>
                                     <option value="jakarta" {{ request('city') == 'jakarta' ? 'selected' : '' }}>Jakarta
                                     </option>
                                 </select>
@@ -61,8 +59,8 @@
                             <div class="card venue-card h-100">
                                 <a href="{{ route('venues.show', $venue->slug) }}">
                                     <div class="position-relative">
-                                        <img src="{{ $venue->cover_image_url }}" class="card-img-top venue-image"
-                                            alt="{{ $venue->name }}">
+                                        <img src="{{ $venue->images->first() ? asset('storage/' . $venue->images->first()->image_path) : 'https://via.placeholder.com/400x250?text=No+Image' }}"
+                                            class="card-img-top venue-image" alt="{{ $venue->name }}">
                                     </div>
                                     <div class="venue-info">
                                         <p class="venue-title-dashboard">{{ $venue->name }}</p>
@@ -96,7 +94,8 @@
                                         <div class="d-grid">
                                             <div class="price-tag">
                                                 <small>Mulai dari </small>
-                                                <strong>{{ $venue->min_price_formatted }}</strong>
+                                                <strong>Rp
+                                                    {{ number_format($venue->minPrice() ?? 0, 0, ',', '.') }}</strong>
                                                 <small>/Sesi</small>
                                             </div>
                                         </div>
@@ -117,7 +116,7 @@
 
                 {{-- Pagination --}}
                 @if ($venues->hasPages())
-                    <div class="d-flex justify-content-center mt-5">
+                    <div class="d-flex justify-content-center my-5">
                         {{ $venues->links() }}
                     </div>
                 @endif
@@ -130,16 +129,15 @@
                             <div class="accordion my-3" id="faqAccordion">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne">
                                             Bagaimana cara memesan lapangan?
                                         </button>
                                     </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse"
-                                        aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                        data-bs-parent="#faqAccordion">
                                         <div class="accordion-body">
-                                            Untuk memesan lapangan, cukup cari lapangan yang Anda inginkan, pilih
-                                            tanggal
+                                            Untuk memesan lapangan, cukup cari lapangan yang Anda inginkan, pilih tanggal
                                             dan waktu, lalu ikuti petunjuk pemesanan di halaman lapangan tersebut.
                                         </div>
                                     </div>
@@ -149,13 +147,13 @@
                             <div class="accordion my-3" id="faqAccordion">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="headingTwo">
-                                        <button class="accordion-button collapsed" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseTwo">
                                             Apakah saya harus login untuk memesan?
                                         </button>
                                     </h2>
-                                    <div id="collapseTwo" class="accordion-collapse collapse"
-                                        aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                        data-bs-parent="#faqAccordion">
                                         <div class="accordion-body">
                                             Tidak, Anda dapat memesan lapangan tanpa login. Namun, jika Anda login,
                                             data Anda akan otomatis terisi dan Anda dapat melihat riwayat booking.
@@ -164,21 +162,24 @@
                                 </div>
                             </div>
                             <div class="accordion my-3" id="faqAccordion4">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingFour">
-                                    <button class="accordion-button collapsed" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#collapseFour">
-                                        Apakah saya bisa membatalkan atau mengubah jadwal (Reschedule)?
-                                    </button>
-                                </h2>
-                                <div id="collapseFour" class="accordion-collapse collapse"
-                                    aria-labelledby="headingFour" data-bs-parent="#faqAccordion4">
-                                    <div class="accordion-body">
-                                        Pembatalan atau perubahan jadwal hanya dapat dilakukan maksimal <strong>24 jam sebelum jam main</strong> diriwyat booking. Silakan hubungi Admin melalui WhatsApp dengan menyertakan Kode Booking Anda untuk proses lebih lanjut.
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingFour">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                                            Apakah saya bisa membatalkan atau mengubah jadwal (Reschedule)?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFour" class="accordion-collapse collapse"
+                                        aria-labelledby="headingFour" data-bs-parent="#faqAccordion4">
+                                        <div class="accordion-body">
+                                            Pembatalan atau perubahan jadwal hanya dapat dilakukan maksimal <strong>24
+                                                jam sebelum jam main</strong> diriwyatbooking. Silakan hubungi Admin
+                                            melalui WhatsApp dengan menyertakan Kode Booking Anda untuk proses lebih
+                                            lanjut.
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>

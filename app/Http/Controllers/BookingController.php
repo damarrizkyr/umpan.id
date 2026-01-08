@@ -85,11 +85,6 @@ class BookingController extends Controller
             ]);
 
         if ($booking) {
-            // PENTING: Append accessors yang baru dibuat tadi
-        $booking->append(['formatted_price', 'formatted_date']);
-
-        // Load relasi field agar nama lapangan muncul di struk
-        $booking->load('field');
             return response()->json([
                 'success' => true,
                 'message' => 'Booking berhasil dibuat.',

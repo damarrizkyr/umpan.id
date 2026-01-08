@@ -62,7 +62,7 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4 text-end">
-                                    @if($booking->status == 'confirmed' && $booking->booking_date->greaterThan(now()->addDay()))
+                                    @if($booking->status == 'pending' && $booking->booking_date->greaterThan(now()->addDay()))
                                         <form action="{{ route('bookings.cancel', $booking->id) }}"
                                               method="POST"
                                               onsubmit="return confirm('Yakin ingin membatalkan booking ini?')">

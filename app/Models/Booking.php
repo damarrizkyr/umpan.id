@@ -59,14 +59,5 @@ class Booking extends Model
 
         return $code;
     }
-
-    public function getFormattedPriceAttribute() {
-        return 'Rp ' . number_format($this->total_price, 0, ',', '.');
-    }
-
-    public function getFormattedDateAttribute() {
-        return Carbon::parse($this->booking_date)->locale('id')->translatedFormat('l, d F Y');
-    }
-
     
 }

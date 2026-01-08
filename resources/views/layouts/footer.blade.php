@@ -22,11 +22,8 @@
                     <a href="https://www.instagram.com/" target="_blank">
                         <i class="bi bi-instagram"></i>
                     </a>
-                    <a href="#" target="_blank">
-                        <i class="bi bi-twitter"></i>
-                    </a>
-                    <a href="#" target="_blank">
-                        <i class="bi bi-youtube"></i>
+                    <a href="https://wa.me/" target="_blank">
+                        <i class="bi bi-whatsapp"></i>
                     </a>
                 </div>
             </div>

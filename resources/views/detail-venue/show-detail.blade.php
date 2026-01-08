@@ -1,17 +1,24 @@
 <x-app-layout>
+    {{-- <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot> --}}
 
     <div class="venue-detail-section">
 
         <div class="container my-5">
             {{-- Gallery --}}
+            {{-- Start Gallery Grid Modern --}}
             <div class="row mb-4 gallery-desktop">
-
                 @include('detail-venue.modal-foto')
+
             </div>
+            {{-- End Gallery Grid Modern --}}
 
             <div class="row">
                 <div class="col-lg-9 mb-4">
-                    {{-- Venue Name & Info Card --}}
+                    {{-- Venue Name --}}
                     <div class="card info-card mb-4 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
                         <div class="card-body p-4 p-lg-5">
 
@@ -19,30 +26,25 @@
                             <div class="mb-4">
                                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                                     <div>
-                                        <h1 class="fw-bold text-dark mb-2"
-                                            style="font-size: 1.5rem; letter-spacing: -1px;">
+
+                                        <h1 class="fw-bold text-dark mb-2" style="font-size: 1.5rem; letter-spacing: -1px;">
                                             {{ $venue->name }}
                                         </h1>
                                         <div class="d-flex align-items-center text-secondary">
                                             <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                                            <span>{{ $venue->address }}, {{ ucfirst($venue->city) }}</span>
+                                            <span class="fs-">{{ $venue->address }}, {{ ucfirst($venue->city) }}</span>
                                         </div>
                                     </div>
 
-                                    {{-- 2. Tombol WhatsApp (Icon Only) --}}
-                                    {{-- Logic: Mengubah 08xx menjadi 628xx agar link WA jalan --}}
-                                    <a href="https://wa.me/{{ preg_replace('/^0/', '62', $venue->user->phone) }}"
-                                        target="_blank"
-                                        class="btn btn-success rounded-circle d-flex align-items-center justify-content-center text-white p-0 shadow-sm"
-                                        style="width: 42px; height: 42px; transition: all 0.2s ease;"
-                                        onmouseover="this.style.transform='scale(1.1)'"
-                                        onmouseout="this.style.transform='scale(1)'">
-                                        <i class="bi bi-whatsapp fs-5"></i>
-                                    </a>
+                                        <a href="https://wa.me/{{ preg_replace('/^0/', '62', $venue->user->phone) }}"
+                                            target="_blank"
+                                            class="btn btn-success rounded-circle d-flex align-items-center justify-content-center text-white p-0 shadow-sm"
+                                            style="width: 42px; height: 42px; transition: all 0.2s ease;"
+                                            onmouseover="this.style.transform='scale(1.1)'"
+                                            onmouseout="this.style.transform='scale(1)'">
+                                            <i class="bi bi-whatsapp fs-5"></i>
+                                        </a>
                                 </div>
-
-                                {{-- BAGIAN KANAN: Kontak & WhatsApp --}}
-
                             </div>
 
                             {{-- FITUR / FASILITAS (Dibuat jadi Badge Modern) --}}
@@ -134,15 +136,13 @@
                 </div>
 
             </div>
-
-            {{-- Reviews Section --}}
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12">
                             <h3 class="fw-bold mb-4">
                                 <i class="bi bi-star-fill text-warning me-2"></i>Ulasan Pengunjung
-                                <span class="text-muted">({{ $venue->review_count }} ulasan)</span>
+                                <span class="text-muted fs-5">({{ $venue->review_count }} ulasan)</span>
                             </h3>
 
                             <div class="row">
@@ -224,8 +224,7 @@
                                             {{-- Jika Login tapi Role Admin --}}
                                             <div class="alert alert-info">
                                                 <i class="bi bi-info-circle me-1"></i> Untuk memberikan ulasan, silakan
-                                                login
-                                                sebagai user dan akun ada sudah pernah booking.
+                                                login sebagai user dan akun ada sudah pernah booking.
                                             </div>
                                         @endif
                                     @else
@@ -248,6 +247,7 @@
                     </div>
                 </div>
             </div>
+
             {{-- Schedules & Booking --}}
             <div class="row mt-5">
                 <div class="col-12">
@@ -255,43 +255,80 @@
                         <i class="bi bi-calendar2-week text-primary me-2"></i>Jadwal & Booking
                     </h3>
 
-                    {{-- 1. BAGIAN NAVIGASI TANGGAL --}}
+                    @php
+                        // Set timezone dan locale untuk Carbon
+                        \Carbon\Carbon::setLocale('id');
+                        date_default_timezone_set('Asia/Jakarta');
+
+                        $today = \Carbon\Carbon::now('Asia/Jakarta');
+                        $dates = collect();
+
+                        // Generate 5 hari ke depan (termasuk hari ini)
+                        for ($i = 0; $i < 5; $i++) {
+                            $date = $today->copy()->addDays($i);
+
+                            $dates->push([
+                                'date' => $date,
+                                'day_name' => $date->translatedFormat('l'), // Nama hari dalam bahasa Indonesia
+                                'date_formatted' => $date->translatedFormat('d F Y'), // Format tanggal
+                                'day_key' => strtolower($date->translatedFormat('l')), // Key untuk matching dengan database
+                            ]);
+                        }
+
+                        // Mapping hari Indonesia ke Inggris untuk Carbon
+                        $dayMapping = [
+                            'senin' => 'Monday',
+                            'selasa' => 'Tuesday',
+                            'rabu' => 'Wednesday',
+                            'kamis' => 'Thursday',
+                            'jumat' => 'Friday',
+                            'sabtu' => 'Saturday',
+                            'minggu' => 'Sunday',
+                        ];
+                    @endphp
+
+                    {{-- Date Navigation --}}
                     <div class="date-navigation mb-4">
                         <div class="row g-2">
                             @foreach ($dates as $index => $dateInfo)
                                 <div class="col">
                                     <button class="btn btn-date-selector w-100 {{ $index === 0 ? 'active' : '' }}"
-                                        {{-- SOLUSI ERROR full_date: Kita panggil langsung dari object date --}} data-date="{{ $dateInfo['date']->format('Y-m-d') }}"
+                                        data-date="{{ $dateInfo['date']->format('Y-m-d') }}"
                                         data-day="{{ $dateInfo['day_key'] }}" onclick="filterByDate(this)">
-
                                         <div class="date-day">{{ $dateInfo['day_name'] }}</div>
-                                        <div class="date-month">{{ $dateInfo['date']->translatedFormat('d M') }}
-                                        </div>
+                                        <div class="date-month">{{ $dateInfo['date']->format('d') }}
+                                            {{ $dateInfo['date']->translatedFormat('M') }}</div>
                                     </button>
                                 </div>
                             @endforeach
                         </div>
                     </div>
 
-                    {{-- 2. BAGIAN CONTAINER JADWAL --}}
+
+
+                    {{-- Fields & Schedules Container --}}
                     <div id="schedulesContainer">
                         @foreach ($dates as $dateIndex => $dateInfo)
-                            <div class="date-schedules {{ $dateIndex === 0 ? '' : 'd-none' }}" {{-- SOLUSI ERROR full_date --}}
+                            <div class="date-schedules {{ $dateIndex === 0 ? '' : 'd-none' }}"
                                 data-date="{{ $dateInfo['date']->format('Y-m-d') }}"
                                 data-day="{{ $dateInfo['day_key'] }}">
 
-                                @php $hasSchedules = false; @endphp
+                                @php
+                                    $hasSchedules = false;
+                                @endphp
 
                                 @foreach ($venue->fields as $field)
                                     @php
-                                        // Filter jadwal yang harinya cocok
-                                        $daySchedules = $field->schedules->filter(
-                                            fn($s) => strtolower($s->day) === $dateInfo['day_key'],
-                                        );
+                                        // Get schedules untuk hari ini
+                                        $daySchedules = $field->schedules->filter(function ($schedule) use ($dateInfo) {
+                                            return strtolower($schedule->day) === $dateInfo['day_key'];
+                                        });
                                     @endphp
 
                                     @if ($daySchedules->count() > 0)
-                                        @php $hasSchedules = true; @endphp
+                                        @php
+                                            $hasSchedules = true;
+                                        @endphp
 
                                         <div class="card info-card mb-4">
                                             <div class="card-body">
@@ -300,34 +337,65 @@
                                                         <i class="bi bi-grid-3x3-gap me-2"></i>{{ $field->name }}
                                                     </h5>
                                                     <span class="badge bg-info">
-                                                        {{ $daySchedules->count() }} Sesi
+                                                        {{ $daySchedules->count() }} Sesi Tersedia
                                                     </span>
                                                 </div>
 
                                                 <div class="row g-3">
                                                     @foreach ($daySchedules->sortBy('time_slot') as $schedule)
                                                         @php
-                                                            // Panggil Logic Model (Pastikan Model Schedule sudah diupdate)
-                                                            $currentDate = $dateInfo['date']->format('Y-m-d');
-                                                            $isBooked = $schedule->isBooked($currentDate);
-                                                            $isPast = $schedule->isPast($currentDate);
+                                                            // 1. Ambil Jam Sekarang
+                                                            $currentDateTime = \Carbon\Carbon::now('Asia/Jakarta');
+
+                                                            // 2. BERSIHKAN FORMAT JAM
+                                                            // Jika format di database "12:00 - 13:00", kita pecah dan ambil "12:00" saja
+                                                            // explode akan memisahkan berdasarkan tanda "-"
+                                                            $timeParts = explode('-', $schedule->time_slot);
+                                                            $startTime = trim($timeParts[0]); // Ambil bagian pertama dan hapus spasi: "12:00"
+
+                                                            // 3. Gabungkan Tanggal Loop + Jam Awal Saja
+                                                            $bookingDateTime = \Carbon\Carbon::createFromFormat(
+                                                                'Y-m-d H:i',
+                                                                $dateInfo['date']->format('Y-m-d') . ' ' . $startTime,
+                                                                'Asia/Jakarta',
+                                                            );
+
+                                                            // 4. Cek Booking Database (Tetap sama)
+                                                            $isBooked = $schedule
+                                                                ->bookings()
+                                                                ->where(
+                                                                    'booking_date',
+                                                                    $dateInfo['date']->format('Y-m-d'),
+                                                                )
+                                                                ->where('status', '!=', 'cancelled')
+                                                                ->exists();
+
+                                                            // 5. LOGIKA BARU: Cek Lewat Waktu
+                                                            // Jika hari ini ADALAH hari yang dipilih, DAN jam sekarang LEBIH BESAR dari jam sesi
+                                                            $isPast =
+                                                                $dateInfo['date']->isToday() &&
+                                                                $currentDateTime->greaterThan($bookingDateTime);
+
+                                                            // Gabungkan status
                                                             $isDisabled = $isBooked || $isPast;
                                                         @endphp
 
+                                                        {{-- Render Tombol --}}
                                                         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
                                                             <div class="time-slot-wrapper">
-                                                                <button type="button"
+                                                                <button type="button" {{-- Tambahkan class is-past/is-booked untuk styling CSS --}}
                                                                     class="btn btn-time-slot w-100 {{ $isBooked ? 'is-booked' : ($isPast ? 'is-past' : '') }}"
+                                                                    {{-- Data attributes --}}
                                                                     data-schedule-id="{{ $schedule->id }}"
                                                                     data-field-id="{{ $field->id }}"
                                                                     data-field-name="{{ $field->name }}"
                                                                     data-time-slot="{{ $schedule->time_slot }}"
                                                                     data-price="{{ $schedule->price }}"
                                                                     data-day="{{ $dateInfo['day_name'] }}"
-                                                                    data-booking-date="{{ $currentDate }}"
-                                                                    data-formatted-price="{{ number_format($schedule->price, 0, ',', '.') }}"
-                                                                    data-formatted-date="{{ $dateInfo['date_formatted'] ?? $dateInfo['date']->translatedFormat('d F Y') }}"
+                                                                    data-booking-date="{{ $dateInfo['date']->format('Y-m-d') }}"
+                                                                    {{-- PENTING: Panggil fungsi JS hanya jika TIDAK disabled --}}
                                                                     onclick="if(!this.disabled) openBookingModal(this)"
+                                                                    {{-- Atribut Disabled HTML --}}
                                                                     {{ $isDisabled ? 'disabled' : '' }}>
 
                                                                     <div
@@ -335,10 +403,11 @@
                                                                         <span><i
                                                                                 class="bi bi-clock me-1"></i>{{ $schedule->time_slot }}</span>
                                                                         <span class="fw-bold">Rp
-                                                                            {{ number_format($schedule->price / 1000, 0) }}k</span>
+                                                                            {{ number_format($schedule->price, 0, ',', '.') }}</span>
                                                                     </div>
                                                                 </button>
 
+                                                                {{-- Badge Status --}}
                                                                 @if ($isBooked)
                                                                     <span class="booked-badge bg-danger">BOOKED</span>
                                                                 @elseif($isPast)
@@ -357,7 +426,7 @@
                                 @if (!$hasSchedules)
                                     <div class="alert alert-warning text-center">
                                         <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Tidak ada jadwal tersedia untuk hari {{ $dateInfo['day_name'] }}.
+                                        Tidak ada jadwal tersedia untuk tanggal ini
                                     </div>
                                 @endif
                             </div>
@@ -367,60 +436,53 @@
                 </div>
             </div>
         </div>
-    </div>
+        <script>
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
 
-    {{-- 1. Load Library SweetAlert2 (Jika belum ada di layout utama) --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            // --- NOTIFIKASI ERROR UMUM ---
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                });
+            @endif
 
-    {{-- 2. Script Logic Notifikasi --}}
-    <script>
-        // --- NOTIFIKASI SUKSES ---
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: "{{ session('success') }}",
-                timer: 3000,
-                showConfirmButton: false
-            });
-        @endif
-
-        // --- NOTIFIKASI ERROR UMUM ---
-        @if (session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: "{{ session('error') }}",
-            });
-        @endif
-
-        // --- NOTIFIKASI ERROR VALIDASI (FORM) ---
-        @if ($errors->any())
-            Swal.fire({
-                icon: 'error',
-                title: 'Terjadi Kesalahan',
-                html: `
+            // --- NOTIFIKASI ERROR VALIDASI (FORM) ---
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    html: `
                 <ul style="text-align: left;">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             `,
-            });
-        @endif
+                });
+            @endif
 
-        // --- KHUSUS: SUDAH PERNAH REVIEW ---
-        // Cara pakai di Controller: return back()->with('already_reviewed', 'Anda sudah pernah memberikan ulasan untuk venue ini.');
-        @if (session('already_reviewed'))
-            Swal.fire({
-                icon: 'warning', // Pakai icon warning agar beda dengan error sistem
-                title: 'Ups, Tunggu Dulu!',
-                text: "{{ session('already_reviewed') }}",
-                confirmButtonText: 'Mengerti',
-                confirmButtonColor: '#ffc107' // Warna kuning warning
-            });
-        @endif
-    </script>
+            // --- KHUSUS: SUDAH PERNAH REVIEW ---
+            // Cara pakai di Controller: return back()->with('already_reviewed', 'Anda sudah pernah memberikan ulasan untuk venue ini.');
+            @if (session('already_reviewed'))
+                Swal.fire({
+                    icon: 'warning', // Pakai icon warning agar beda dengan error sistem
+                    title: 'Ups, Tunggu Dulu!',
+                    text: "{{ session('already_reviewed') }}",
+                    confirmButtonText: 'Mengerti',
+                    confirmButtonColor: '#ffc107' // Warna kuning warning
+                });
+            @endif
+        </script>
 
 
 </x-app-layout>

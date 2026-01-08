@@ -4,6 +4,20 @@ function getElemen(id) {
     return document.getElementById(id);
 }
 
+// Mengubah angka menjadi format Rupiah
+const formatRupiah = (angka) => {
+    return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
+};
+
+// Mengubah tanggal menjadi format panjang Indonesia (sebelumnya: fmtDate)
+const formatTanggal = (tanggal) => {
+    return new Date(tanggal).toLocaleDateString('id-ID', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+};
 
 // Template HTML Struk (sebelumnya: getReceiptHtml)
 const buatHtmlStruk = (dataBooking) => {
@@ -68,9 +82,9 @@ window.openBookingModal = (tombolYangDiklik) => {
     getElemen('displayTimeSlot').value = dataTombol.timeSlot;
 
     // Format tampilan agar enak dilihat user
-    getElemen('displayDate').value = dataTombol.formattedDate;
-    getElemen('displayPrice').value = dataTombol.formattedPrice;
-    getElemen('totalPayment').innerText = dataTombol.formattedPrice;
+    getElemen('displayDate').value = formatTanggal(dataTombol.bookingDate);
+    getElemen('displayPrice').value = formatRupiah(dataTombol.price);
+    getElemen('totalPayment').innerText = formatRupiah(dataTombol.price);
 
     // Tampilkan Modal Bootstrap
     new bootstrap.Modal(getElemen('bookingModal')).show();

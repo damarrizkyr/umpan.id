@@ -77,24 +77,4 @@ class Venue extends Model
     {
         return $this->reviews()->count();
     }
-
-    public function getCoverImageUrlAttribute()
-    {
-        // Ambil gambar pertama jika ada
-        $firstImage = $this->images->first();
-
-        if ($firstImage) {
-            return asset('storage/' . $firstImage->image_path);
-        }
-
-        // Jika tidak ada gambar, kembalikan gambar default/placeholder
-        return 'https://via.placeholder.com/400x250?text=No+Image';
-    }
-
-    // 2. Logika Format Harga Terendah
-    public function getMinPriceFormattedAttribute()
-    {
-        $price = $this->minPrice() ?? 0;
-        return 'Rp ' . number_format($price, 0, ',', '.');
-    }
 }

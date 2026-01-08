@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Field;
 use App\Models\Venue;
 use App\Models\Booking;
@@ -21,7 +20,6 @@ class VenueController extends Controller
     public function index()
     {
         //
-
         $venues = Venue::with(['images'])->where('user_id', auth()->id())->orderBy('id', 'desc')->paginate(10);
         // variable $venues isinya berupa data dari models venue beeserta relasinya dengan images namun hanaya user yang sedang login yang bisa melihat data tersebut, lalu diurutkan berdasarkan id secara descending dan ditampilkan 10 data per halaman
         return view('profile.page-profile',
@@ -51,22 +49,7 @@ class VenueController extends Controller
 
         $venues = $venues->withCount('reviews')->orderBy('reviews_count', 'desc')->paginate(10)->withQueryString();
 
-        Carbon::setLocale('id');
-        $dates = collect();
-        $today = Carbon::now('Asia/Jakarta');
-
-        for ($i = 0; $i < 5; $i++) {
-            $date = $today->copy()->addDays($i);
-            $dates->push([
-                'date_obj' => $date, // Object Carbon asli
-                'date' => $date->format('Y-m-d'), // String untuk database
-                'day_name' => $date->translatedFormat('l'), // Senin, Selasa
-                'day_key' => strtolower($date->translatedFormat('l')), // senin, selasa (untuk matching database)
-                'formatted' => $date->translatedFormat('d F'), // 20 Oktober
-            ]);
-        }
-
-        return view("dashboard", compact('venues', 'dates'));
+        return view("dashboard", compact('venues'));
     }
 
     /**
@@ -170,31 +153,12 @@ class VenueController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($slug)
+    public function show(Venue $venue)
     {
         //
-        Carbon::setLocale('id');
-        date_default_timezone_set('Asia/Jakarta');
-        $venue = Venue::with(['images', 'fields.schedules.bookings', 'reviews.user'])
-        ->where('slug', $slug) // atau findOrFail($id)
-        ->firstOrFail();
+        $venue->load('fields.schedules');
 
-        // --- LOGIKA PEMBUATAN TANGGAL DIPINDAH KE SINI ---
-        $dates = collect();
-        $today = now();
-
-        for ($i = 0; $i < 5; $i++) {
-            $date = $today->copy()->addDays($i);
-            $dates->push([
-                'date' => $date,
-                'day_name' => $date->translatedFormat('l'),
-                'date_formatted' => $date->translatedFormat('d F Y'),
-                'day_key' => strtolower($date->translatedFormat('l')), // senin, selasa, dst
-                'full_date' => $date->format('Y-m-d'), // format untuk database
-            ]);
-        }
-
-        return view('detail-venue.show-detail', compact('venue', 'dates'));
+    return view('detail-venue.show-detail', compact('venue'));
     }
 
     /**
