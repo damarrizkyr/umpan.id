@@ -17,13 +17,32 @@
 
                             {{-- HEADER SECTION --}}
                             <div class="mb-4">
-                                <h1 class="fw-bold text-dark mb-2" style="font-size: 1.5rem; letter-spacing: -1px;">
-                                    {{ $venue->name }}
-                                </h1>
-                                <div class="d-flex align-items-center text-secondary">
-                                    <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                                    <span >{{ $venue->address }}, {{ ucfirst($venue->city) }}</span>
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                                    <div>
+                                        <h1 class="fw-bold text-dark mb-2"
+                                            style="font-size: 1.5rem; letter-spacing: -1px;">
+                                            {{ $venue->name }}
+                                        </h1>
+                                        <div class="d-flex align-items-center text-secondary">
+                                            <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                                            <span>{{ $venue->address }}, {{ ucfirst($venue->city) }}</span>
+                                        </div>
+                                    </div>
+
+                                    {{-- 2. Tombol WhatsApp (Icon Only) --}}
+                                    {{-- Logic: Mengubah 08xx menjadi 628xx agar link WA jalan --}}
+                                    <a href="https://wa.me/{{ preg_replace('/^0/', '62', $venue->user->phone) }}"
+                                        target="_blank"
+                                        class="btn btn-success rounded-circle d-flex align-items-center justify-content-center text-white p-0 shadow-sm"
+                                        style="width: 42px; height: 42px; transition: all 0.2s ease;"
+                                        onmouseover="this.style.transform='scale(1.1)'"
+                                        onmouseout="this.style.transform='scale(1)'">
+                                        <i class="bi bi-whatsapp fs-5"></i>
+                                    </a>
                                 </div>
+
+                                {{-- BAGIAN KANAN: Kontak & WhatsApp --}}
+
                             </div>
 
                             {{-- FITUR / FASILITAS (Dibuat jadi Badge Modern) --}}
