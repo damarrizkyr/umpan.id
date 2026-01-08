@@ -1,0 +1,56 @@
+/* Hero Carousel */
+/* Gradasi hitam dari bawah ke atas */
+#carouselExampleDark .carousel-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0)
+    );
+    z-index: 1;
+}
+
+/* Caption di atas gradasi */
+#carouselExampleDark .carousel-caption {
+    z-index: 2;
+}
+
+/* Tombol prev & next warna putih */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1);
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    color: aliceblue;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Indicator warna putih */
+.carousel-indicators [data-bs-target] {
+    background-color: #ffffff;
+}
+
+#galleryModal .carousel-control-prev-icon,
+#galleryModal .carousel-control-next-icon {
+    filter: none !important; /* Paksa HAPUS filter invert */
+    background-color: transparent !important; /* Pastikan background transparan */
+}
+
+/* Pastikan tombol terlihat jelas saat di-hover */
+#galleryModal .carousel-control-prev:hover,
+#galleryModal .carousel-control-next:hover {
+    opacity: 0.8;
+}

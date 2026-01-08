@@ -1,0 +1,293 @@
+
+   /* 1. LAYOUT & CONTAINER */
+/* Container utama untuk membatasi lebar konten agar rapi di layar besar */
+.venue-detail-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Responsive Breakpoints */
+@media (min-width: 1400px) {
+    .venue-detail-section { max-width: 1320px; }
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+    .venue-detail-section { max-width: 1140px; }
+}
+
+@media (max-width: 1199px) {
+    .venue-detail-section { padding: 0 1.5rem; }
+}
+
+@media (max-width: 768px) {
+    .venue-detail-section { padding: 0 1rem; }
+}
+
+/* 2. GALLERY GRID MODERN*/
+
+.gallery-main-img {
+    height: 400px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-side-img {
+    height: calc(50% - 0.25rem);
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.gallery-main-img:hover,
+.gallery-side-img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .gallery-main-img {
+        height: 250px;
+        margin-bottom: 0.5rem;
+    }
+    .gallery-side-img {
+        height: 150px;
+    }
+}
+
+/* 3. INFO CARDS*/
+
+.info-card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.info-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.info-card .card-body {
+    padding: 1.5rem;
+}
+
+
+.info-card .d-flex.justify-content-between {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+@media (max-width: 576px) {
+    .info-card .card-body { padding: 1rem; }
+}
+
+/* 4. DATE NAVIGATION*/
+
+.date-navigation {
+    margin-bottom: 2rem;
+    padding-bottom: 0.5rem;
+    scroll-behavior: smooth;
+}
+
+.date-navigation::-webkit-scrollbar { height: 6px; }
+.date-navigation::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+.date-navigation::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+.date-navigation::-webkit-scrollbar-thumb:hover { background: #555; }
+
+.btn-date-selector {
+    border: 2px solid #e9ecef;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    min-width: 100px;
+}
+
+.btn-date-selector:hover {
+    border-color: #7c1818;
+    background: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(124, 24, 24, 0.2);
+}
+
+.btn-date-selector.active {
+    border-color: #7c1818;
+    background: linear-gradient(135deg, #7c1818 0%, #541616 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(124, 24, 24, 0.4);
+    transform: translateY(-2px);
+}
+
+.date-day {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.5px;
+}
+.date-month {
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.btn-date-selector.active .date-day,
+.btn-date-selector.active .date-month {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.date-schedules {
+    animation: fadeInUp 0.4s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .btn-date-selector { min-width: 80px; padding: 0.8rem 0.3rem; }
+    .date-navigation .row { flex-wrap: nowrap; overflow-x: auto; }
+    .date-navigation .col { flex: 0 0 auto; width: auto; }
+}
+
+/* 5. TIME SLOT BUTTONS (DIPERBAIKI)*/
+
+.time-slot-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.btn-time-slot {
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s;
+    border: 2px solid #198754;
+    background: white;
+    color: #198754;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efek kilauan hover */
+.btn-time-slot::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+.btn-time-slot:hover:not(:disabled)::before { left: 100%; }
+
+/* State: Normal Active Hover */
+.btn-time-slot:hover:not(:disabled) {
+    background: #198754;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(25, 135, 84, 0.4);
+}
+.btn-time-slot:active:not(:disabled) { transform: translateY(-1px); }
+
+
+/* Penggunaan !important di sini bertujuan untuk memastikan warna ini menang
+   melawan style bawaan Bootstrap untuk tombol disabled */
+
+/* 1. Default Disabled (Jaga-jaga) */
+.btn-time-slot:disabled {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #6c757d;
+    cursor: not-allowed;
+    pointer-events: none; /* MEMATIKAN KLIK SECARA PAKSA DARI CSS */
+}
+
+/* 2. KASUS: Waktu Sudah Lewat (Past) - ABU-ABU */
+.btn-time-slot.is-past:disabled {
+    background-color: #e2e3e5 !important;
+    border-color: #d3d6d8 !important;
+    color: #636c72 !important;
+    opacity: 1 !important; /* Mencegah tombol jadi transparan */
+}
+
+/* 3. KASUS: Sudah Dibooking (Booked) - MERAH PUDAR */
+.btn-time-slot.is-booked:disabled {
+    background-color: #f8d7da !important;
+    border-color: #f5c2c7 !important;
+    color: #842029 !important;
+    opacity: 1 !important;
+}
+
+/* Badge Status (BOOKED / LEWAT) */
+.booked-badge {
+    position: absolute;
+    top: -10px; right: -10px;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+}
+.booked-badge.bg-danger { background: #dc3545 !important; }
+.booked-badge.bg-secondary { background: #6c757d !important; }
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@media (max-width: 576px) {
+    .btn-time-slot {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    .btn-time-slot .d-flex {
+        flex-direction: column;
+        gap: 0.3rem;
+        align-items: flex-start !important;
+    }
+}
+
+/* 6. UTILITIES & BADGES*/
+
+.badge { padding: 0.5rem 1rem; font-weight: 600; }
+
+.info-card .badge.bg-info {
+    background: linear-gradient(135deg, #0dcaf0 0%, #0891b2 100%) !important;
+    padding: 0.5rem 0.8rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.alert-info {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 10px;
+}
+
+.alert-warning {
+    border-radius: 12px;
+    border: 2px dashed #ffc107;
+    background: #fff3cd;
+    text-align: center;
+    padding: 1.5rem;
+}
+.alert-warning i { font-size: 1.5rem; }
+
+.bi-grid-3x3-gap, .bi-calendar2-week, .bi-info-circle,
+.bi-star, .bi-geo-alt-fill, .bi-clock-fill {
+    vertical-align: middle;
+}

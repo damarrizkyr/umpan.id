@@ -1,0 +1,9 @@
+@import './slider-banner.css';
+@import './dashboard.css';
+@import './footer.css';
+@import './detail-venue-before-booking.css';
+@import './add-venue.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,15 @@
+.upload-area.drag-over {
+    background-color: #e9ecef; /* Abu-abu muda */
+    border-color: #0d6efd !important; /* Warna biru primary */
+}
+.preview-image-wrapper {
+    position: relative;
+}
+.btn-remove-image {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    border-radius: 50%;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}

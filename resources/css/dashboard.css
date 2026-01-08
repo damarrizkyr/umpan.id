@@ -1,0 +1,156 @@
+/* Search Bar */
+.search-section {
+    background: white;
+    padding: 2rem 0;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
+}
+
+.search-box {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.search-input-group {
+    background: white;
+    border-radius: 50px;
+    padding: 0.5rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.search-input-group input,
+.search-input-group select {
+    border: none;
+    padding: 0.8rem 1.5rem;
+}
+
+.search-input-group input:focus,
+.search-input-group select:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.btn-search {
+    border-radius: 50px;
+    padding: 0.8rem 2rem;
+    font-weight: 600;
+}
+
+/* Venues Section Container */
+.venues-section {
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Responsive untuk layar besar */
+@media (min-width: 1400px) {
+    .venues-section {
+        max-width: 1320px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+    .venues-section {
+        max-width: 1140px;
+    }
+}
+
+/* Venue Cards */
+.venue-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    height: 100%; /* Agar tinggi card seragam */
+    background: #fff;
+}
+
+.venue-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.venue-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.venue-image {
+    height: 220px; /* Sedikit dikecilkan agar proporsional */
+    width: 100%;
+    object-fit: cover;
+    position: relative;
+}
+
+.venue-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 5;
+}
+
+.venue-info {
+    padding: 1.25rem;
+}
+
+
+.venue-title-dashboard {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+.venue-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.venue-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.price-tag {
+    background: linear-gradient(135deg, #198754 0%, #157347 100%);
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    font-weight: 700;
+    display: block; /* Supaya full width di card */
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* No Venues State */
+.no-venues {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.no-venues i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+/* Accordion Fixes */
+.accordion-collapse.show {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.accordion-body {
+    color: #333 !important;
+}
