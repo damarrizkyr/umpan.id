@@ -94,6 +94,7 @@ class BookingController extends Controller
                     'customer_name' => $booking->customer_name,
                     'customer_phone' => $booking->customer_phone,
                     'venue_name' => $field->venue->name,
+                    'venue_address' => $field->venue->address . ', ' . ucfirst($field->venue->city),
                     'field_name' => $field->name,
                     'booking_date' => $booking->booking_date->format('Y-m-d'),
                     'time_slot' => $schedule->time_slot,

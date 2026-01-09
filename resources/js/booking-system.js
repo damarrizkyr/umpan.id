@@ -21,9 +21,8 @@ const formatTanggal = (tanggal) => {
 
 // Template HTML Struk (sebelumnya: getReceiptHtml)
 const buatHtmlStruk = (dataBooking) => {
-    // Ambil nama tempat, jika tidak ada pakai default 'Venue Sport'
-    const elemenJudul = document.querySelector('.detail-venue-title');
-    const namaVenue = elemenJudul ? elemenJudul.innerText : 'Venue Sport';
+    const namaVenue = dataBooking.venue_name || 'Umpan.id Sport Venue';
+    const alamatVenue = dataBooking.venue_address || 'Alamat Venue';
 
     return `<html>
                 <head>
@@ -37,6 +36,9 @@ const buatHtmlStruk = (dataBooking) => {
                 <body>
                     <div class="kotak-struk">
                         <h3>STRUK BOOKING<br>${namaVenue}</h3>
+                        <br>
+                        <p class="alamat-struk">${alamatVenue}</p>
+                        <br>
                         <hr>
                         <div class="baris-data">
                             <span>Kode</span><b>${dataBooking.booking_code}</b>

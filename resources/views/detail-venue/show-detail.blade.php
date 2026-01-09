@@ -98,13 +98,6 @@
                                 </p>
                             </div>
 
-                            <hr>
-
-                            {{-- map lapangan --}}
-
-
-                            <hr>
-
                             <div class="text-center">
                                 <div class="mb-2">
                                     <small class="text-muted">Harga Mulai Dari</small>
@@ -256,11 +249,8 @@
                     </h3>
 
                     @php
-                        // Set timezone dan locale untuk Carbon
-                        \Carbon\Carbon::setLocale('id');
-                        date_default_timezone_set('Asia/Jakarta');
 
-                        $today = \Carbon\Carbon::now('Asia/Jakarta');
+                        $today = \Carbon\Carbon::now();
                         $dates = collect();
 
                         // Generate 5 hari ke depan (termasuk hari ini)
@@ -294,7 +284,8 @@
                                 <div class="col">
                                     <button class="btn btn-date-selector w-100 {{ $index === 0 ? 'active' : '' }}"
                                         data-date="{{ $dateInfo['date']->format('Y-m-d') }}"
-                                        data-day="{{ $dateInfo['day_key'] }}" onclick="filterByDate(this)">
+                                        data-day="{{ $dateInfo['day_key'] }}"
+                                        onclick="filterByDate(this)">
                                         <div class="date-day">{{ $dateInfo['day_name'] }}</div>
                                         <div class="date-month">{{ $dateInfo['date']->format('d') }}
                                             {{ $dateInfo['date']->translatedFormat('M') }}</div>
@@ -345,7 +336,7 @@
                                                     @foreach ($daySchedules->sortBy('time_slot') as $schedule)
                                                         @php
                                                             // 1. Ambil Jam Sekarang
-                                                            $currentDateTime = \Carbon\Carbon::now('Asia/Jakarta');
+                                                            $currentDateTime = \Carbon\Carbon::now();
 
                                                             // 2. BERSIHKAN FORMAT JAM
                                                             // Jika format di database "12:00 - 13:00", kita pecah dan ambil "12:00" saja
