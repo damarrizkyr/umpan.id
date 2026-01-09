@@ -1,5 +1,6 @@
 // --- 1. HELPER FUNCTIONS (Fungsi Pembantu) ---
-// // Mengambil elemen HTML berdasarkan ID
+
+// Mengambil elemen HTML berdasarkan ID
 function getElemen(id) {
     return document.getElementById(id);
 }
@@ -9,7 +10,7 @@ const formatRupiah = (angka) => {
     return 'Rp ' + parseInt(angka).toLocaleString('id-ID');
 };
 
-// Mengubah tanggal menjadi format panjang Indonesia (sebelumnya: fmtDate)
+// Mengubah tanggal menjadi format panjang Indonesia
 const formatTanggal = (tanggal) => {
     return new Date(tanggal).toLocaleDateString('id-ID', {
         weekday: 'long',
@@ -19,62 +20,125 @@ const formatTanggal = (tanggal) => {
     });
 };
 
-// Template HTML Struk (sebelumnya: getReceiptHtml)
-const buatHtmlStruk = (dataBooking) => {
+// Template HTML Struk (Support Download Button)
+const buatHtmlStruk = (dataBooking, includeDownloadBtn = false) => {
     const namaVenue = dataBooking.venue_name || 'Umpan.id Sport Venue';
     const alamatVenue = dataBooking.venue_address || 'Alamat Venue';
 
+    // A. Logika Tombol Download (Hanya tampil jika diminta)
+    const downloadBtnHtml = includeDownloadBtn
+        ? `<div class="no-print" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+             <button onclick="downloadReceipt()" style="padding: 12px 24px; background: #198754; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; gap: 8px;">
+               <span>Download Gambar</span>
+             </button>
+             <p style="font-size: 11px; color: #888; margin-top: 8px;">
+                (Klik tombol di atas untuk simpan gambar, atau tekan Ctrl+P untuk print PDF)
+             </p>
+           </div>`
+        : '';
+
+    // B. Script Download (Disisipkan langsung ke window baru)
+    const scriptDownload = includeDownloadBtn
+        ? `<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+           <script>
+             async function downloadReceipt() {
+               const btn = document.querySelector('button');
+               const originalText = btn.innerText;
+               btn.innerText = 'Memproses...';
+               btn.disabled = true;
+
+               const element = document.querySelector('.kotak-struk');
+               try {
+                 const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#fff' });
+                 const link = document.createElement('a');
+                 link.href = canvas.toDataURL('image/png');
+                 link.download = 'Struk-${dataBooking.booking_code}.png';
+                 link.click();
+               } catch(err) {
+                   console.error(err);
+                   alert('Gagal mendownload gambar.');
+               } finally {
+                   btn.innerText = originalText;
+                   btn.disabled = false;
+               }
+             }
+           </script>`
+        : '';
+
+    // C. Return HTML Lengkap
     return `<html>
                 <head>
+                    <title>Struk Booking - ${dataBooking.booking_code}</title>
+                    ${scriptDownload}
                     <style>
-                        body { font-family: monospace; padding: 20px; }
-                        .kotak-struk { border: 2px dashed #000; padding: 20px; width: 350px; margin: 0 auto; background: #fff; text-align: center; }
-                        .baris-data { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
-                        hr { border-top: 1px dashed #000; }
+                        body { font-family: 'Courier New', monospace; padding: 40px; background: #f8f9fa; display: flex; justify-content: center; }
+                        .kotak-struk {
+                            border: 2px dashed #333;
+                            padding: 30px;
+                            width: 380px;
+                            background: #fff;
+                            text-align: center;
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                        }
+                        h3 { margin: 0 0 10px 0; line-height: 1.4; color: #000; }
+                        .alamat-struk { font-size: 12px; color: #555; margin-bottom: 20px; line-height: 1.4; }
+                        .baris-data { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; color: #333; }
+                        hr { border: none; border-top: 1px dashed #333; margin: 15px 0; }
+
+                        @media print {
+                            .no-print { display: none !important; }
+                            body { background: #fff; padding: 0; }
+                            .kotak-struk { box-shadow: none; border: 2px dashed #000; width: 100%; max-width: 350px; margin: 0 auto; }
+                        }
                     </style>
                 </head>
                 <body>
-                    <div class="kotak-struk">
-                        <h3>STRUK BOOKING<br>${namaVenue}</h3>
-                        <br>
-                        <p class="alamat-struk">${alamatVenue}</p>
-                        <br>
-                        <hr>
-                        <div class="baris-data">
-                            <span>Kode</span><b>${dataBooking.booking_code}</b>
+                    <div style="display:flex; flex-direction:column;">
+                        <div class="kotak-struk">
+                            <h3>STRUK BOOKING<br>${namaVenue}</h3>
+                            <p class="alamat-struk">${alamatVenue}</p>
+                            <hr>
+                            <div class="baris-data">
+                                <span>Kode Booking</span>
+                                <b>${dataBooking.booking_code}</b>
+                            </div>
+                            <div class="baris-data">
+                                <span>Tanggal Main</span>
+                                <span>${formatTanggal(dataBooking.booking_date)}</span>
+                            </div>
+                            <div class="baris-data">
+                                <span>Penyewa</span>
+                                <span>${dataBooking.customer_name}</span>
+                            </div>
+                            <div class="baris-data">
+                                <span>Lapangan</span>
+                                <span>${dataBooking.field_name}</span>
+                            </div>
+                            <div class="baris-data">
+                                <span>Jam</span>
+                                <span>${dataBooking.time_slot}</span>
+                            </div>
+                            <hr>
+                            <div class="baris-data" style="font-weight:bold; font-size: 16px;">
+                                <span>TOTAL</span>
+                                <span>${formatRupiah(dataBooking.total_price)}</span>
+                            </div>
+                            <hr>
+                            <small style="color:#777;">Terima kasih telah booking!</small>
                         </div>
-                        <div class="baris-data">
-                            <span>Tgl</span>${formatTanggal(dataBooking.booking_date)}
-                        </div>
-                        <div class="baris-data">
-                            <span>Nama</span>${dataBooking.customer_name}
-                        </div>
-                        <div class="baris-data">
-                            <span>Lapangan</span>${dataBooking.field_name}
-                        </div>
-                        <div class="baris-data">
-                            <span>Jam</span>${dataBooking.time_slot}
-                        </div>
-                        <hr>
-                        <div class="baris-data" style="font-weight:bold">
-                            <span>TOTAL</span>${formatRupiah(dataBooking.total_price)}
-                        </div>
-                        <hr><small>Terima kasih!</small>
+                        ${downloadBtnHtml}
                     </div>
                 </body>
             </html>`;
 };
 
+
 // --- 2. GLOBAL FUNCTIONS (Dipanggil dari HTML onclick) ---
 
-// Buka Modal & Isi Data
 window.openBookingModal = (tombolYangDiklik) => {
-    // Mengambil data-atribut dari tombol (sebelumnya: d)
     const dataTombol = tombolYangDiklik.dataset;
-
-    // Mengisi Input Hidden & Tampilan Form
-    // (sebelumnya singkatan k diganti jadi idInput)
     const daftarIdInput = ['scheduleId', 'fieldId', 'bookingDate'];
+
     daftarIdInput.forEach(idInput => {
         getElemen(idInput).value = dataTombol[idInput];
     });
@@ -83,89 +147,46 @@ window.openBookingModal = (tombolYangDiklik) => {
     getElemen('displayDay').value = dataTombol.day;
     getElemen('displayTimeSlot').value = dataTombol.timeSlot;
 
-    // Format tampilan agar enak dilihat user
     getElemen('displayDate').value = formatTanggal(dataTombol.bookingDate);
     getElemen('displayPrice').value = formatRupiah(dataTombol.price);
     getElemen('totalPayment').innerText = formatRupiah(dataTombol.price);
 
-    // Tampilkan Modal Bootstrap
     new bootstrap.Modal(getElemen('bookingModal')).show();
 };
 
-// Filter Jadwal per Tanggal
 window.filterByDate = (tombolTanggal) => {
-    // Hapus kelas 'active' dari semua tombol tanggal
     document.querySelectorAll('.btn-date-selector').forEach(tombol => {
         tombol.classList.remove('active');
     });
-
-    // Tambah kelas 'active' ke tombol yang baru diklik
     tombolTanggal.classList.add('active');
-
-    // Ambil tanggal yang dipilih
     const tanggalDipilih = tombolTanggal.dataset.date;
 
-    // Sembunyikan/Tampilkan jadwal sesuai tanggal
     document.querySelectorAll('.date-schedules').forEach(divJadwal => {
-        // Jika tanggal jadwal TIDAK SAMA dengan tanggal dipilih, maka sembunyikan (d-none)
         const harusDisembunyikan = divJadwal.dataset.date !== tanggalDipilih;
         divJadwal.classList.toggle('d-none', harusDisembunyikan);
     });
 };
 
-// Navigasi Galeri (sebelumnya: idx diganti indexSlide)
 window.goToGallerySlide = (indexSlide) => {
     const carousel = bootstrap.Carousel.getOrCreateInstance(getElemen('carouselGallery'));
     carousel.to(indexSlide);
 };
 
-// Print Struk (sebelumnya: w diganti jendelaPrint)
+// --- FUNGSI CETAK STRUK (UPDATED) ---
+// Membuka tab baru (BUKAN POPUP) -> Tampil Struk -> Ada tombol Download
 window.printReceipt = (dataBooking) => {
-    const jendelaPrint = window.open();
-    jendelaPrint.document.write(buatHtmlStruk(dataBooking));
-    jendelaPrint.document.close();
+    // Dengan menghapus parameter 'width' dan 'height', browser akan membukanya sebagai TAB BARU
+    const jendelaPrint = window.open('', '_blank');
 
-    // Tunggu sebentar agar loading selesai baru print
-    setTimeout(() => {
-        jendelaPrint.print();
-        jendelaPrint.close();
-    }, 500);
-};
-
-// Download Gambar Struk
-window.downloadReceiptImage = async (dataBooking) => {
-    // Buat elemen div sementara (container)
-    const containerSementara = document.createElement('div');
-    containerSementara.innerHTML = buatHtmlStruk(dataBooking);
-    document.body.appendChild(containerSementara);
-
-    try {
-        // Konversi HTML ke Canvas (Gambar)
-        const canvas = await html2canvas(containerSementara.querySelector('.kotak-struk'), {
-            scale: 2,
-            backgroundColor: '#fff'
-        });
-
-        // Buat link download palsu
-        const linkDownload = document.createElement('a');
-        linkDownload.href = canvas.toDataURL();
-        linkDownload.download = `Struk-${dataBooking.booking_code}.png`;
-        linkDownload.click(); // Klik otomatis
-
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil Didownload!',
-            timer: 1000,
-            showConfirmButton: false
-        });
-
-    } catch(error) {
-        console.error(error);
+    if (jendelaPrint) {
+        jendelaPrint.document.write(buatHtmlStruk(dataBooking, true));
+        jendelaPrint.document.close();
+        jendelaPrint.focus();
+    } else {
+        alert('Pop-up diblokir! Izinkan pop-up untuk melihat struk.');
     }
-
-    // Hapus elemen sementara
-    containerSementara.remove();
 };
+
 
 // --- 3. EVENT LISTENERS (Saat DOM Ready) ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -175,14 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (formBooking) {
         formBooking.onsubmit = async (event) => {
-            event.preventDefault(); // Mencegah reload halaman
+            event.preventDefault();
 
             // 1. Validasi Input HP
             const inputHp = getElemen('customerPhone');
             const nilaiHp = inputHp.value.trim();
             const elemenError = getElemen('phoneErrorMsg');
 
-            // Reset state error sebelumnya
             inputHp.classList.remove('is-invalid');
 
             if (!nilaiHp.startsWith('08')) {
@@ -204,7 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tombolSubmit.innerText = 'Sedang Memproses...';
 
             try {
-                // Kirim data ke server (sebelumnya: res)
                 const response = await fetch(formBooking.action, {
                     method: 'POST',
                     headers: {
@@ -222,29 +241,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dataJson = await response.json();
 
                 if (dataJson.success) {
-                    // Tutup Modal
                     bootstrap.Modal.getInstance(getElemen('bookingModal')).hide();
-
-                    // Simpan data sementara di window agar bisa diakses tombol Print/Download
                     window.dataBookingSementara = dataJson.data;
 
                     Swal.fire({
                         icon: 'success',
                         title: 'Booking Berhasil!',
-                        html: `<p>Kode Booking: <b>${dataJson.data.booking_code}</b></p>
-                               <button onclick="window.printReceipt(window.dataBookingSementara)" class="btn btn-primary mt-2">Cetak Struk</button>
-                               <button onclick="window.downloadReceiptImage(window.dataBookingSementara)" class="btn btn-success mt-2">Download Gambar</button>`,
+                        html: `<p style="margin-bottom:15px;">Kode Booking: <b>${dataJson.data.booking_code}</b></p>
+                               <div style="display:flex; justify-content:center;">
+                                   <button onclick="window.printReceipt(window.dataBookingSementara)" class="btn btn-primary">
+                                        <i class="bi bi-receipt"></i> Lihat / Cetak Struk
+                                   </button>
+                               </div>`,
                         showConfirmButton: true,
                         confirmButtonText: 'Tutup'
                     }).then((hasilSweetAlert) => {
-                        if(hasilSweetAlert.isConfirmed) location.reload();
+                        if(hasilSweetAlert.isConfirmed || hasilSweetAlert.isDismissed) {
+                            location.reload();
+                        }
                     });
                 }
 
             } catch (error) {
                 Swal.fire('Gagal', error.message, 'error');
             } finally {
-                // Kembalikan tombol seperti semula
                 tombolSubmit.disabled = false;
                 tombolSubmit.innerText = teksTombolLama;
             }
@@ -256,11 +276,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elemenModal) {
         elemenModal.addEventListener('hidden.bs.modal', () => {
             const daftarInputReset = ['customerName', 'customerPhone'];
-
             daftarInputReset.forEach(idInput => {
                 const elemenInput = getElemen(idInput);
                 if (elemenInput) {
-                    // Kembalikan ke nilai default (kosong)
                     elemenInput.value = elemenInput.dataset.default || '';
                     elemenInput.classList.remove('is-invalid');
                 }
